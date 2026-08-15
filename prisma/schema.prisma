@@ -1,0 +1,15 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Placeholder model only, to confirm the Prisma + PostgreSQL wiring works.
+// Real domain models (Product, Order, Customer, etc.) are added in a later step.
+model Placeholder {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+}
