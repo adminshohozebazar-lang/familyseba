@@ -7,9 +7,84 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Placeholder model only, to confirm the Prisma + PostgreSQL wiring works.
-// Real domain models (Product, Order, Customer, etc.) are added in a later step.
-model Placeholder {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
+// Only COD is live today. New methods are appended here as gateways are
+// integrated — adding an enum value is a non-breaking, additive change.
+enum PaymentMethod {
+  COD
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  SHIPPED
+  DELIVERED
+  RETURNED
+  CANCELLED
+}
+
+// A product category (e.g. "Digestive Health", "Immunity Boosters").
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// A herbal/wellness supplement sold in the store.
+model Product {
+  id            String   @id @default(cuid())
+  name          String
+  slug          String   @unique
+  description   String
+  price         Decimal  @db.Decimal(10, 2) // money is stored as Decimal, never Float, to avoid rounding errors
+  stockQuantity Int
+  categoryId    String
+  category      Category @relation(fields: [categoryId], references: [id])
+
+  imageUrls          String[] // Cloudinary URLs; upload flow is wired in a later step
+  youtubeVideoUrl    String? // optional product demo video embed
+  dosageInstructions String?
+  disclaimerText     String? // falls back to DEFAULT_HERBAL_DISCLAIMER (src/config/legal.ts) when null
+  isActive           Boolean  @default(true) // lets a product be hidden from the storefront without deleting it
+
+  orderItems OrderItem[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+// A guest checkout order — no user accounts, COD-driven storefront.
+model Order {
+  id       String @id @default(cuid())
+  sequence Int    @default(autoincrement()) // internal counter used to build orderNumber; never shown to customers
+
+  orderNumber     String        @unique // human-friendly reference derived from `sequence`, e.g. FS-000123
+  customerName    String
+  customerPhone   String
+  customerAddress String
+  paymentMethod   PaymentMethod
+  status          OrderStatus   @default(PENDING)
+  totalAmount     Decimal       @db.Decimal(10, 2)
+
+  items     OrderItem[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@index([customerPhone])
+  @@index([status])
+}
+
+// A single line item within an order, snapshotting the product's price at purchase time.
+model OrderItem {
+  id      String @id @default(cuid())
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  quantity     Int
+  priceAtOrder Decimal @db.Decimal(10, 2) // snapshot — product.price may change after this order was placed
 }
