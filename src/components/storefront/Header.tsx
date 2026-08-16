@@ -13,6 +13,9 @@ export function Header() {
           <Link href="/products" className="hover:text-brand-primary">
             All Products
           </Link>
+          <Link href="/track-order" className="hover:text-brand-primary">
+            Track Order
+          </Link>
           <CartIcon />
         </nav>
       </div>

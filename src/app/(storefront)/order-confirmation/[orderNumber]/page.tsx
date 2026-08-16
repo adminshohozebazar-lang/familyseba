@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { formatPrice } from "@/lib/format";
@@ -27,6 +28,13 @@ export default async function OrderConfirmationPage({ params }: OrderConfirmatio
         <p className="mt-4 text-sm text-brand-neutral-dark">
           We&apos;ll call you at <strong>{order.customerPhone}</strong> shortly to confirm your order before
           it&apos;s dispatched for delivery.
+        </p>
+        <p className="mt-4 text-sm text-gray-500">
+          You can check your order status anytime at{" "}
+          <Link href="/track-order" className="font-medium text-brand-primary hover:underline">
+            Track Order
+          </Link>
+          .
         </p>
       </div>
 
