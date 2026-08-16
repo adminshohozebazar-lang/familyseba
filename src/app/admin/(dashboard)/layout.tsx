@@ -29,6 +29,9 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
               <Link href="/admin/products" className="hover:text-brand-primary">
                 Products
               </Link>
+              <Link href="/admin/orders" className="hover:text-brand-primary">
+                Orders
+              </Link>
             </nav>
           </div>
           <LogoutButton />

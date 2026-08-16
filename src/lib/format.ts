@@ -4,3 +4,7 @@
 export function formatPrice(price: number | string | { toString(): string }): string {
   return `৳${Number(price).toFixed(2)}`;
 }
+
+export function formatDate(date: Date): string {
+  return new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeStyle: "short" }).format(date);
+}
