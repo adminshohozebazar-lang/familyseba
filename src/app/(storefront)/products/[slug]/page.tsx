@@ -6,6 +6,7 @@ import { getYoutubeEmbedUrl } from "@/lib/youtube";
 import { DEFAULT_HERBAL_DISCLAIMER } from "@/config/legal";
 import { ImageGallery } from "@/components/storefront/ImageGallery";
 import { YoutubeEmbed } from "@/components/storefront/YoutubeEmbed";
+import { AddToCartButton } from "@/components/cart/AddToCartButton";
 
 interface ProductDetailPageProps {
   params: { slug: string };
@@ -54,13 +55,16 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             </div>
           )}
 
-          <button
-            type="button"
+          <AddToCartButton
+            product={{
+              id: product.id,
+              slug: product.slug,
+              name: product.name,
+              price: Number(product.price),
+              imageUrl: product.imageUrls[0] ?? null,
+            }}
             disabled={stockStatus === "OUT_OF_STOCK"}
-            className="mt-6 w-full rounded-md bg-brand-accent px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-accent/90 disabled:cursor-not-allowed disabled:bg-gray-300 sm:w-auto"
-          >
-            {stockStatus === "OUT_OF_STOCK" ? "Out of Stock" : "Add to Cart"}
-          </button>
+          />
 
           <p className="mt-6 text-xs leading-relaxed text-gray-400">{disclaimer}</p>
         </div>

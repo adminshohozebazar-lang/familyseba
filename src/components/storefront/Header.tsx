@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SITE_NAME } from "@/config/site";
+import { CartIcon } from "@/components/cart/CartIcon";
 
 export function Header() {
   return (
@@ -8,10 +9,11 @@ export function Header() {
         <Link href="/" className="text-xl font-bold text-brand-primary">
           {SITE_NAME}
         </Link>
-        <nav className="text-sm font-medium text-brand-neutral-dark">
+        <nav className="flex items-center gap-5 text-sm font-medium text-brand-neutral-dark">
           <Link href="/products" className="hover:text-brand-primary">
             All Products
           </Link>
+          <CartIcon />
         </nav>
       </div>
     </header>
