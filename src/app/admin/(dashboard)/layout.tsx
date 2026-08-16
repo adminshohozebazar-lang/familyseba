@@ -5,6 +5,14 @@ import { LogoutButton } from "@/components/admin/LogoutButton";
 // Shared shell (nav + logout) for every authenticated admin page. Lives in a
 // route group so /admin/login — which must NOT show this chrome — can sit
 // outside it while still resolving to the same /admin/* URL space.
+//
+// Forces every nested admin page to render dynamically. Without this,
+// pages that only read via Prisma (no cookies()/headers() call) get
+// statically prerendered at build time — fine for the public storefront,
+// but wrong here: category/product edits wouldn't show up in the admin
+// list views until the next deploy.
+export const dynamic = "force-dynamic";
+
 export default function AdminDashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-brand-neutral-light">
