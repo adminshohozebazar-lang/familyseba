@@ -1,5 +1,6 @@
 "use server";
 
+import { randomUUID } from "crypto";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/db";
@@ -28,10 +29,10 @@ export async function createProduct(input: ProductInput): Promise<ActionResult |
     return { success: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
   }
 
-  const slug = slugify(parsed.data.name);
-  if (!slug) {
-    return { success: false, error: "Name must contain at least one letter or number" };
-  }
+  // slugify() keeps letters/numbers from any script, so this only ever
+  // triggers for names with zero usable characters in any language (e.g.
+  // emoji-only) — a short random slug beats failing validation outright.
+  const slug = slugify(parsed.data.name) || `product-${randomUUID().slice(0, 8)}`;
 
   const [existingSlug, category] = await Promise.all([
     prisma.product.findUnique({ where: { slug } }),
@@ -59,10 +60,7 @@ export async function updateProduct(id: string, input: ProductInput): Promise<Ac
     return { success: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
   }
 
-  const slug = slugify(parsed.data.name);
-  if (!slug) {
-    return { success: false, error: "Name must contain at least one letter or number" };
-  }
+  const slug = slugify(parsed.data.name) || `product-${randomUUID().slice(0, 8)}`;
 
   const [slugOwner, category] = await Promise.all([
     prisma.product.findUnique({ where: { slug } }),
