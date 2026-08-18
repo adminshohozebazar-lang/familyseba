@@ -69,6 +69,13 @@ interface CartContextValue {
   removeItem: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
+  // Slide-out drawer visibility — UI presentation state, kept alongside the
+  // cart data itself rather than in a second context, since the Header
+  // icon, AddToCartButton, and the drawer all need to share it. Cart data
+  // logic (add/remove/update/totals) above is untouched.
+  isCartOpen: boolean;
+  openCart: () => void;
+  closeCart: () => void;
 }
 
 const CartContext = createContext<CartContextValue | null>(null);
@@ -81,6 +88,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   // empty) to avoid a hydration mismatch — localStorage is only read after
   // mount, via the effect below.
   const [isHydrated, setIsHydrated] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   useEffect(() => {
     try {
@@ -114,6 +122,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
     removeItem: (productId) => dispatch({ type: "REMOVE_ITEM", productId }),
     updateQuantity: (productId, quantity) => dispatch({ type: "UPDATE_QUANTITY", productId, quantity }),
     clearCart: () => dispatch({ type: "CLEAR_CART" }),
+    isCartOpen,
+    openCart: () => setIsCartOpen(true),
+    closeCart: () => setIsCartOpen(false),
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

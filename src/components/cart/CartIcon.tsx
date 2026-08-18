@@ -4,10 +4,21 @@ import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 
 export function CartIcon() {
-  const { itemCount } = useCart();
+  const { itemCount, openCart } = useCart();
 
   return (
-    <Link href="/cart" className="relative text-brand-neutral-dark hover:text-brand-primary" aria-label="Cart">
+    <Link
+      href="/cart"
+      onClick={(event) => {
+        // The href keeps this a real link (progressive enhancement — a
+        // right-click "open in new tab" or no-JS visit still lands on the
+        // /cart fallback page); a plain click opens the drawer instead.
+        event.preventDefault();
+        openCart();
+      }}
+      className="relative text-brand-neutral-dark hover:text-brand-primary"
+      aria-label="Cart"
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"

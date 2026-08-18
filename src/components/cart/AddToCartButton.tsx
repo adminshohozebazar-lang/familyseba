@@ -21,7 +21,7 @@ interface AddToCartButtonProps {
 // else there stays server-rendered. Also reused (as "compact") by
 // ProductCard, so the add-to-cart + confirmation logic lives in one place.
 export function AddToCartButton({ product, disabled, variant = "full" }: AddToCartButtonProps) {
-  const { addItem } = useCart();
+  const { addItem, openCart } = useCart();
   const [justAdded, setJustAdded] = useState(false);
 
   function handleClick() {
@@ -32,6 +32,10 @@ export function AddToCartButton({ product, disabled, variant = "full" }: AddToCa
       price: product.price,
       imageUrl: product.imageUrl,
     });
+    // Only genuine "add to cart" clicks open the drawer — BuyNowButton adds
+    // to the cart too but navigates straight to checkout instead, and the
+    // drawer's own quantity +/- controls call updateQuantity, never this.
+    openCart();
     setJustAdded(true);
     setTimeout(() => setJustAdded(false), 1500);
   }
