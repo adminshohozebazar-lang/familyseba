@@ -39,7 +39,7 @@ export function AddToCartButton({ product, disabled, variant = "full" }: AddToCa
   const variantClass =
     variant === "compact"
       ? "w-full rounded-md bg-brand-accent px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-accent/90 disabled:cursor-not-allowed disabled:bg-gray-300"
-      : "mt-6 w-full rounded-md bg-brand-accent px-6 py-3 text-sm font-semibold text-white hover:bg-brand-accent/90 disabled:cursor-not-allowed disabled:bg-gray-300 sm:w-auto";
+      : "w-full rounded-md bg-brand-accent px-6 py-3 text-sm font-semibold text-white hover:bg-brand-accent/90 disabled:cursor-not-allowed disabled:bg-gray-300 sm:w-auto";
 
   return (
     <button

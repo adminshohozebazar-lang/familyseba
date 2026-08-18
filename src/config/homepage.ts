@@ -101,6 +101,11 @@ export const CONTACT_INFO: ContactInfo = {
   phone: "+880 1XXXXXXXXX",
 };
 
+// Real number (unlike the placeholders above) — used for the "Order via
+// WhatsApp" link on the product detail page. Digits only, no "+" or spaces,
+// matching the format wa.me expects.
+export const WHATSAPP_NUMBER = "8801950379800";
+
 export interface SocialLinks {
   facebook: string;
   instagram: string;
