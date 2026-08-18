@@ -7,11 +7,17 @@ import { PaymentMethod } from "@prisma/client";
 import { useCart } from "@/context/CartContext";
 import { createOrder } from "./actions";
 import { checkoutSchema } from "@/lib/validations/order";
+import { getDistricts, getThanas } from "@/lib/bd-address";
 import { formatPrice } from "@/lib/format";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { Label } from "@/components/ui/Label";
+
+const DISTRICTS = getDistricts();
+
+const selectClassName =
+  "w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary disabled:cursor-not-allowed disabled:bg-gray-100";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -19,10 +25,19 @@ export default function CheckoutPage() {
 
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
+  const [district, setDistrict] = useState("");
+  const [thana, setThana] = useState("");
   const [customerAddress, setCustomerAddress] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(PaymentMethod.COD);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const thanaOptions = getThanas(district);
+
+  function handleDistrictChange(value: string) {
+    setDistrict(value);
+    setThana(""); // the previously selected thana may not belong to the new district
+  }
 
   if (items.length === 0) {
     return (
@@ -42,6 +57,8 @@ export default function CheckoutPage() {
     const candidate = {
       customerName,
       customerPhone,
+      district,
+      thana,
       customerAddress,
       paymentMethod,
       items: items.map((item) => ({ productId: item.productId, quantity: item.quantity })),
@@ -100,6 +117,49 @@ export default function CheckoutPage() {
               value={customerPhone}
               onChange={(e) => setCustomerPhone(e.target.value)}
             />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="district">District</Label>
+              <select
+                id="district"
+                required
+                value={district}
+                onChange={(e) => handleDistrictChange(e.target.value)}
+                className={selectClassName}
+              >
+                <option value="" disabled>
+                  Select district
+                </option>
+                {DISTRICTS.map((d) => (
+                  <option key={d} value={d}>
+                    {d}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <Label htmlFor="thana">Thana (Upazila)</Label>
+              <select
+                id="thana"
+                required
+                disabled={!district}
+                value={thana}
+                onChange={(e) => setThana(e.target.value)}
+                className={selectClassName}
+              >
+                <option value="" disabled>
+                  {district ? "Select thana" : "Select district first"}
+                </option>
+                {thanaOptions.map((t) => (
+                  <option key={t} value={t}>
+                    {t}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
           <div>

@@ -1,0 +1,15 @@
+diff --git a/node_modules/@bangladeshi/bangladesh-address/package.json b/node_modules/@bangladeshi/bangladesh-address/package.json
+index c87886c..6ba91ae 100644
+--- a/node_modules/@bangladeshi/bangladesh-address/package.json
++++ b/node_modules/@bangladeshi/bangladesh-address/package.json
+@@ -8,8 +8,8 @@
+   "publishConfig": {
+     "registry": "https://registry.npmjs.org/"
+   },
+-  "main": "./build/index.js",
+-  "types": "./build/index.d.ts",
++  "main": "./build/src/index.js",
++  "types": "./build/src/index.d.ts",
+   "files": [
+     "build/**/*"
+   ],

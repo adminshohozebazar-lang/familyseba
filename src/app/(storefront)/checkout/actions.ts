@@ -24,7 +24,7 @@ export async function createOrder(input: CheckoutInput): Promise<ActionResult> {
     return { success: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
   }
 
-  const { customerName, customerPhone, customerAddress, paymentMethod, items } = parsed.data;
+  const { customerName, customerPhone, district, thana, customerAddress, paymentMethod, items } = parsed.data;
 
   // Merge in case the same product appears twice in the submitted cart —
   // shouldn't happen from our own UI, but the server never assumes that.
@@ -74,6 +74,8 @@ export async function createOrder(input: CheckoutInput): Promise<ActionResult> {
           orderNumber: randomUUID(),
           customerName,
           customerPhone,
+          district,
+          thana,
           customerAddress,
           paymentMethod,
           totalAmount,

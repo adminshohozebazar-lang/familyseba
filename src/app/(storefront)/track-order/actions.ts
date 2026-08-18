@@ -9,6 +9,8 @@ export interface TrackedOrder {
   orderNumber: string;
   status: OrderStatus;
   createdAt: Date;
+  district: string | null;
+  thana: string | null;
   totalAmount: number;
   items: { name: string; quantity: number }[];
 }
@@ -39,6 +41,8 @@ export async function trackOrder(input: TrackOrderInput): Promise<ActionResult> 
       orderNumber: order.orderNumber,
       status: order.status,
       createdAt: order.createdAt,
+      district: order.district,
+      thana: order.thana,
       // Decimal instances can't cross the Server Action boundary — must be
       // a plain number by the time this returns to the client.
       totalAmount: Number(order.totalAmount),

@@ -75,6 +75,9 @@ export default function TrackOrderPage() {
                 </span>
               </div>
               <p className="mt-1 text-xs text-gray-400">{formatDate(order.createdAt)}</p>
+              {(order.thana || order.district) && (
+                <p className="mt-1 text-xs text-gray-400">{[order.thana, order.district].filter(Boolean).join(", ")}</p>
+              )}
 
               <ul className="mt-3 space-y-1 text-sm text-gray-600">
                 {order.items.map((item, index) => (

@@ -61,6 +61,9 @@ export default async function OrderConfirmationPage({ params }: OrderConfirmatio
       <div className="mt-6 rounded-lg border border-gray-200 bg-white p-6">
         <h2 className="mb-2 text-sm font-semibold text-brand-neutral-dark">Delivery Address</h2>
         <p className="text-sm text-gray-600">{order.customerAddress}</p>
+        {(order.thana || order.district) && (
+          <p className="mt-1 text-sm text-gray-600">{[order.thana, order.district].filter(Boolean).join(", ")}</p>
+        )}
         <p className="mt-3 text-sm text-gray-600">Payment: Cash on Delivery</p>
       </div>
     </div>

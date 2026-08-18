@@ -38,6 +38,9 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
           <p className="text-sm text-gray-600">{order.customerName}</p>
           <p className="text-sm text-gray-600">{order.customerPhone}</p>
           <p className="mt-2 text-sm text-gray-600">{order.customerAddress}</p>
+          {(order.thana || order.district) && (
+            <p className="text-sm text-gray-600">{[order.thana, order.district].filter(Boolean).join(", ")}</p>
+          )}
         </div>
         <div className="rounded-lg border border-gray-200 bg-white p-4">
           <h2 className="mb-2 text-sm font-semibold text-brand-neutral-dark">Payment</h2>

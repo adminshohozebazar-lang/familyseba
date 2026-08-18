@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { PaymentMethod } from "@prisma/client";
+import { isValidDistrict, isUpazila } from "@bangladeshi/bangladesh-address";
 
 // Bangladeshi mobile numbers: 11 digits, starting with 01. Shared by
 // checkout and the track-order lookup — one regex, one error message.
@@ -9,22 +10,31 @@ export const bdPhoneSchema = z
   .trim()
   .regex(BD_PHONE_REGEX, "Enter a valid Bangladeshi phone number (11 digits, starting with 01)");
 
-export const checkoutSchema = z.object({
-  customerName: z.string().trim().min(1, "Name is required").max(200, "Name is too long"),
-  customerPhone: bdPhoneSchema,
-  customerAddress: z.string().trim().min(1, "Delivery address is required").max(1000, "Address is too long"),
-  // z.nativeEnum reads straight from the Prisma enum, so adding BKASH/NAGAD/
-  // CARD there later is enough to make them valid here too — no schema change.
-  paymentMethod: z.nativeEnum(PaymentMethod),
-  items: z
-    .array(
-      z.object({
-        productId: z.string().min(1),
-        quantity: z.coerce.number().int().positive(),
-      })
-    )
-    .min(1, "Your cart is empty"),
-});
+export const checkoutSchema = z
+  .object({
+    customerName: z.string().trim().min(1, "Name is required").max(200, "Name is too long"),
+    customerPhone: bdPhoneSchema,
+    district: z.string().trim().min(1, "District is required").refine(isValidDistrict, "Select a valid district"),
+    thana: z.string().trim().min(1, "Thana is required"),
+    customerAddress: z.string().trim().min(1, "Delivery address is required").max(1000, "Address is too long"),
+    // z.nativeEnum reads straight from the Prisma enum, so adding BKASH/NAGAD/
+    // CARD there later is enough to make them valid here too — no schema change.
+    paymentMethod: z.nativeEnum(PaymentMethod),
+    items: z
+      .array(
+        z.object({
+          productId: z.string().min(1),
+          quantity: z.coerce.number().int().positive(),
+        })
+      )
+      .min(1, "Your cart is empty"),
+  })
+  // Cross-field check: the thana must actually belong to the chosen district (e.g. blocks a
+  // stale thana surviving a district change if the client-side reset is ever bypassed).
+  .refine((data) => isUpazila(data.thana, data.district), {
+    message: "Select a valid thana for the chosen district",
+    path: ["thana"],
+  });
 
 export type CheckoutInput = z.infer<typeof checkoutSchema>;
 
