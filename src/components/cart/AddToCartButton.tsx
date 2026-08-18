@@ -12,11 +12,15 @@ interface AddToCartButtonProps {
     imageUrl: string | null;
   };
   disabled: boolean;
+  // "full" is the big detail-page CTA (default, unchanged); "compact" is a
+  // smaller button sized for a product card tile.
+  variant?: "full" | "compact";
 }
 
 // The only interactive piece the product detail page needs — everything
-// else there stays server-rendered.
-export function AddToCartButton({ product, disabled }: AddToCartButtonProps) {
+// else there stays server-rendered. Also reused (as "compact") by
+// ProductCard, so the add-to-cart + confirmation logic lives in one place.
+export function AddToCartButton({ product, disabled, variant = "full" }: AddToCartButtonProps) {
   const { addItem } = useCart();
   const [justAdded, setJustAdded] = useState(false);
 
@@ -32,12 +36,17 @@ export function AddToCartButton({ product, disabled }: AddToCartButtonProps) {
     setTimeout(() => setJustAdded(false), 1500);
   }
 
+  const variantClass =
+    variant === "compact"
+      ? "w-full rounded-md bg-brand-accent px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-accent/90 disabled:cursor-not-allowed disabled:bg-gray-300"
+      : "mt-6 w-full rounded-md bg-brand-accent px-6 py-3 text-sm font-semibold text-white hover:bg-brand-accent/90 disabled:cursor-not-allowed disabled:bg-gray-300 sm:w-auto";
+
   return (
     <button
       type="button"
       onClick={handleClick}
       disabled={disabled}
-      className="mt-6 w-full rounded-md bg-brand-accent px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-accent/90 disabled:cursor-not-allowed disabled:bg-gray-300 sm:w-auto"
+      className={`transition-colors ${variantClass}`}
     >
       {disabled ? "Out of Stock" : justAdded ? "Added to Cart ✓" : "Add to Cart"}
     </button>

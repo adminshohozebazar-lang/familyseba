@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { Label } from "@/components/ui/Label";
+import { ImageUploader } from "@/components/admin/ImageUploader";
 
 // Only a create form exists for categories right now (no edit/delete yet —
 // see Step 3 scope), so this stays a standalone page rather than a shared
@@ -15,6 +16,7 @@ import { Label } from "@/components/ui/Label";
 export default function NewCategoryPage() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [iconUrl, setIconUrl] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -22,7 +24,7 @@ export default function NewCategoryPage() {
     event.preventDefault();
     setError(null);
 
-    const result = categorySchema.safeParse({ name, description });
+    const result = categorySchema.safeParse({ name, description, iconUrl });
     if (!result.success) {
       setError(result.error.issues[0]?.message ?? "Invalid input");
       return;
@@ -55,6 +57,17 @@ export default function NewCategoryPage() {
             rows={3}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
+          />
+        </div>
+
+        <div>
+          <Label>Icon (optional)</Label>
+          {/* ImageUploader is built for multi-image products; reused here in
+              single-image mode by always collapsing to just the most recent
+              URL. Falls back to a letter avatar on the storefront if unset. */}
+          <ImageUploader
+            value={iconUrl ? [iconUrl] : []}
+            onChange={(urls) => setIconUrl(urls[urls.length - 1] ?? "")}
           />
         </div>
 

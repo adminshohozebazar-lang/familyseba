@@ -32,6 +32,7 @@ export async function createCategory(input: CategoryInput): Promise<ActionResult
       name: parsed.data.name,
       slug,
       description: parsed.data.description || null,
+      iconUrl: parsed.data.iconUrl || null,
     },
   });
 

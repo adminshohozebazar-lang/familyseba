@@ -1,8 +1,12 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
-import { SITE_NAME, SITE_TAGLINE } from "@/config/site";
+import { HERO_SLIDES, PROMO_BANNERS, TESTIMONIALS, VIDEO_GALLERY_IDS } from "@/config/homepage";
 import { ProductCard } from "@/components/storefront/ProductCard";
-import { CategoryPills } from "@/components/storefront/CategoryPills";
+import { HeroCarousel } from "@/components/storefront/HeroCarousel";
+import { PromoBanner } from "@/components/storefront/PromoBanner";
+import { CategoryGrid } from "@/components/storefront/CategoryGrid";
+import { Testimonials } from "@/components/storefront/Testimonials";
+import { VideoGallery } from "@/components/storefront/VideoGallery";
 
 const FEATURED_PRODUCT_COUNT = 8;
 
@@ -18,31 +22,33 @@ export default async function HomePage() {
       orderBy: { createdAt: "desc" },
       take: FEATURED_PRODUCT_COUNT,
     }),
-    // Only categories that currently have something to show — a pill
+    // Only categories that currently have something to show — a card
     // leading to a guaranteed-empty listing isn't useful navigation.
     prisma.category.findMany({
       where: { products: { some: { isActive: true } } },
       orderBy: { name: "asc" },
-      select: { slug: true, name: true },
+      select: { slug: true, name: true, iconUrl: true },
     }),
   ]);
 
   return (
     <div>
-      <section className="bg-brand-primary px-4 py-16 text-center text-white">
-        <h1 className="text-3xl font-bold sm:text-4xl">{SITE_NAME}</h1>
-        <p className="mx-auto mt-3 max-w-md text-brand-neutral-light/90">{SITE_TAGLINE}</p>
-        <Link
-          href="/products"
-          className="mt-6 inline-block rounded-md bg-brand-accent px-6 py-2.5 text-sm font-semibold text-white hover:bg-brand-accent/90"
-        >
-          Shop Now
-        </Link>
-      </section>
+      <HeroCarousel slides={HERO_SLIDES} />
+
+      {PROMO_BANNERS.length > 0 && (
+        <section className="mx-auto max-w-5xl px-4 py-6">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {PROMO_BANNERS.map((banner, index) => (
+              <PromoBanner key={index} banner={banner} />
+            ))}
+          </div>
+        </section>
+      )}
 
       {categories.length > 0 && (
         <section className="mx-auto max-w-5xl px-4 py-8">
-          <CategoryPills categories={categories} />
+          <h2 className="mb-4 text-xl font-bold text-brand-neutral-dark">Shop by Category</h2>
+          <CategoryGrid categories={categories} />
         </section>
       )}
 
@@ -66,6 +72,9 @@ export default async function HomePage() {
           </p>
         )}
       </section>
+
+      <Testimonials testimonials={TESTIMONIALS} />
+      <VideoGallery videoIds={VIDEO_GALLERY_IDS} />
     </div>
   );
 }

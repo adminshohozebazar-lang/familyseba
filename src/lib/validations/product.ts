@@ -9,6 +9,17 @@ export const productSchema = z.object({
   price: z.coerce
     .number({ invalid_type_error: "Price must be a number" })
     .positive("Price must be greater than 0"),
+  // Empty string means "no discount" — kept as "" rather than coercing
+  // straight to a number so the form can distinguish "not set" from 0,
+  // same pattern as youtubeVideoUrl below.
+  compareAtPrice: z
+    .union([
+      z.coerce
+        .number({ invalid_type_error: "Original price must be a number" })
+        .positive("Original price must be greater than 0"),
+      z.literal(""),
+    ])
+    .optional(),
   stockQuantity: z.coerce
     .number({ invalid_type_error: "Stock quantity must be a number" })
     .int("Stock quantity must be a whole number")

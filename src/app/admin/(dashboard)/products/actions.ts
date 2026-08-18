@@ -14,6 +14,7 @@ function toProductData(parsed: ProductInput) {
     name: parsed.name,
     description: parsed.description,
     price: parsed.price,
+    compareAtPrice: parsed.compareAtPrice || null,
     stockQuantity: parsed.stockQuantity,
     categoryId: parsed.categoryId,
     imageUrls: parsed.imageUrls,

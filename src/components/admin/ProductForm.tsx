@@ -21,6 +21,7 @@ interface InitialProduct {
   name: string;
   description: string;
   price: number;
+  compareAtPrice: number | null;
   stockQuantity: number;
   categoryId: string;
   imageUrls: string[];
@@ -43,6 +44,9 @@ export function ProductForm({ categories, initialProduct }: ProductFormProps) {
   const [name, setName] = useState(initialProduct?.name ?? "");
   const [description, setDescription] = useState(initialProduct?.description ?? "");
   const [price, setPrice] = useState(initialProduct ? String(initialProduct.price) : "");
+  const [compareAtPrice, setCompareAtPrice] = useState(
+    initialProduct?.compareAtPrice != null ? String(initialProduct.compareAtPrice) : ""
+  );
   const [stockQuantity, setStockQuantity] = useState(
     initialProduct ? String(initialProduct.stockQuantity) : ""
   );
@@ -63,6 +67,7 @@ export function ProductForm({ categories, initialProduct }: ProductFormProps) {
       name,
       description,
       price,
+      compareAtPrice,
       stockQuantity,
       categoryId,
       imageUrls,
@@ -132,6 +137,21 @@ export function ProductForm({ categories, initialProduct }: ProductFormProps) {
             onChange={(e) => setStockQuantity(e.target.value)}
           />
         </div>
+      </div>
+
+      <div>
+        <Label htmlFor="compareAtPrice">Original Price (optional)</Label>
+        <Input
+          id="compareAtPrice"
+          type="number"
+          step="0.01"
+          min="0"
+          value={compareAtPrice}
+          onChange={(e) => setCompareAtPrice(e.target.value)}
+        />
+        <p className="mt-1 text-xs text-gray-400">
+          Shown crossed out for discount display. Leave blank if not on sale.
+        </p>
       </div>
 
       <div>
